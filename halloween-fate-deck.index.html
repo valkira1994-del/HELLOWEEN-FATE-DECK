@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111111">
+  <title>Halloween Fate Deck — 12 судеб</title>
+  <style>
+    :root { color-scheme: dark; --bg:#111; --card:#222; --edge:#3b3b3b; --text:#f2f0ed; --muted:#bdbbb9; --blue:#3779ff; }
+    * { box-sizing:border-box }
+    body { margin:0; min-height:100vh; background:var(--bg); color:var(--text); font:16px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif; }
+    main { width:min(1120px,100%); margin:auto; padding:36px 24px 56px; }
+    header { text-align:center; margin:4px 0 28px; }
+    h1 { margin:0 0 8px; font-size:clamp(25px,4vw,38px); letter-spacing:.04em; }
+    header p { color:var(--muted); margin:0; }
+    .notice { margin:22px auto 26px; padding:12px 16px; max-width:760px; border:1px solid #363636; border-radius:12px; color:#ddd; text-align:center; background:#191919; }
+    .deck { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+    .card { min-height:194px; padding:16px 15px 14px; border:1px solid var(--edge); border-radius:17px; background:var(--card); display:flex; flex-direction:column; transition:opacity .22s ease,transform .22s ease,border-color .22s ease,box-shadow .22s ease; }
+    .card:not(.locked):hover { transform:translateY(-2px); border-color:#626262; }
+    .card.chosen { border-color:#a23b43; box-shadow:0 0 0 1px #a23b4355,0 10px 35px #0008; }
+    .card.locked { opacity:.42; filter:saturate(.55); }
+    .top { display:flex; justify-content:space-between; align-items:center; color:#ccc; font-size:12px; letter-spacing:.08em; }
+    .symbol { font-size:22px; line-height:1; }
+    h2 { font-size:17px; margin:17px 0 5px; }
+    .teaser { margin:0; color:var(--muted); font-size:14px; line-height:1.4; }
+    .open { appearance:none; border:0; background:none; color:var(--blue); text-align:left; padding:0; margin-top:auto; padding-top:12px; font:inherit; font-size:12px; letter-spacing:.08em; cursor:pointer; }
+    .open:hover { color:#82aaff; }
+    .open:focus-visible, .close:focus-visible { outline:2px solid #8fb1ff; outline-offset:4px; border-radius:3px; }
+    .open:disabled { cursor:not-allowed; color:#777; }
+    .status { min-height:24px; margin:20px 0 0; text-align:center; color:#d7b7b7; }
+    dialog { width:min(620px,calc(100% - 28px)); max-height:min(82vh,760px); padding:0; color:var(--text); background:#1c1c1c; border:1px solid #555; border-radius:18px; box-shadow:0 25px 100px #000c; }
+    dialog::backdrop { background:#000b; backdrop-filter:blur(3px); }
+    .modal { padding:24px; }
+    .modal-top { display:flex; align-items:center; justify-content:space-between; gap:12px; color:#c9b8a0; font-size:13px; }
+    .close { border:1px solid #555; border-radius:9px; color:#eee; background:#292929; padding:7px 11px; cursor:pointer; }
+    .modal h2 { font-size:25px; margin:16px 0 10px; }
+    .modal .story { color:#e2ded9; white-space:pre-line; }
+    .modal .closing { margin-top:20px; color:#cfaaa6; font-style:italic; }
+    @media (max-width:760px) { .deck { grid-template-columns:repeat(2,minmax(0,1fr)); } main{padding:24px 16px 40px} }
+    @media (max-width:480px) { .deck { grid-template-columns:1fr; } .card{min-height:170px} }
+    @media (prefers-reduced-motion:reduce) { *,*::before,*::after { transition:none !important; scroll-behavior:auto !important } }
+  </style>
+</head>
+<body>
+  <main>
+    <header><h1>HALLOWEEN FATE DECK</h1><p>12 карт. 12 судеб. Один выбор.</p></header>
+    <div class="notice">Выбери карту, которая первой притянула взгляд. После открытия судьбу изменить нельзя.</div>
+    <section class="deck" id="deck" aria-label="Колода из 12 карт"></section>
+    <p class="status" id="status" aria-live="polite"></p>
+  </main>
+  <dialog id="reveal" aria-labelledby="reveal-title">
+    <article class="modal">
+      <div class="modal-top"><span id="reveal-number"></span><button class="close" id="close" type="button">Закрыть</button></div>
+      <h2 id="reveal-title"></h2>
+      <div class="story" id="reveal-story"></div>
+      <p class="closing">Эта карта выбрана. Другую судьбу вытянуть уже нельзя.</p>
+    </article>
+  </dialog>
+  <script>
+    const cards = [
+      {icon:'🩸',title:'Алый бал',teaser:'Он пригласил тебя на бал. Но никто не сказал, кто здесь охотник.',story:'Ты получаешь приглашение на закрытый маскарад в старом особняке. Среди гостей в масках только хозяин узнаёт тебя сразу — и смотрит так, будто ждал много лет.\n\nКогда часы пробьют полночь, он признается: этот бал устроен ради тебя. Он должен был сделать тебя своей добычей, но вместо этого предлагает сделку — остаться рядом с ним до рассвета и узнать, почему он не может причинить тебе вред.'},
+      {icon:'🌕',title:'Зов луны',teaser:'Сегодня ночью лес принадлежит не людям.',story:'В полнолуние ты находишь его в глубине леса. Он просит уйти, пока ещё способен говорить, но сам не отводит от тебя взгляда. Между деревьями слышится вой, и луна поднимается над кронами.\n\nПроклятие должно превратить его в чудовище. Вместо этого он остаётся человеком рядом с тобой. Теперь вам предстоит выяснить, почему именно твоё присутствие удерживает зверя — и какую цену потребует лес за это спасение.'},
+      {icon:'🕯️',title:'Последний сеанс',teaser:'Вы хотели вызвать дух. Но пришёл кто-то, кто знает вас обоих.',story:'За старым столом мерцают свечи, а хрустальный шар темнеет изнутри. Вы пришли на спиритический сеанс ради ответа, но из темноты звучит голос, который называет ваши имена и рассказывает о событии, которого ещё не было.\n\nКогда пламя гаснет, он берёт тебя за руку. Кто-то третий всё ещё находится в комнате — и, кажется, пытается предупредить вас о будущем, в котором один из вас исчезнет.'},
+      {icon:'🐈‍⬛',title:'Фамильяр',teaser:'Ведьмы не выбирают фамильяров. Иногда они сами выбирают ведьму.',story:'В старой библиотеке ты находишь книгу, на страницах которой появляется незнакомое имя. В ту же ночь он приходит к тебе: загадочный фамильяр в человеческом облике, связанный с тобой древним заклинанием.\n\nОн знает твои привычки, охраняет тебя от чужой магии и утверждает, что ваша связь началась задолго до этой жизни. Чтобы разорвать заклятие, придётся узнать, кто из вас первым произнёс клятву — и почему никто из вас не хочет её отменять.'},
+      {icon:'🥀',title:'Проклятый дворец',teaser:'Дворец просыпается ровно в полночь. И запирает двери.',story:'Вы оказываетесь в заброшенном дворце, где свечи загораются сами, а коридоры меняются, стоит отвернуться. В зеркалах отражается не настоящее, а чужие воспоминания.\n\nДворец узнаёт вас обоих и раз за разом сводит вместе. Чтобы найти выход, вам придётся раскрыть давнюю тайну королевской семьи. Возможно, проклятие держит вас здесь не как пленников, а как единственных людей, способных закончить его.'},
+      {icon:'🎭',title:'Без лиц',teaser:'На этом маскараде нельзя показывать лицо. Особенно ему.',story:'На таинственном маскараде никто не снимает масок. Он приглашает тебя на танец и угадывает каждую твою мысль, хотя вы встречаетесь впервые. Вокруг вас кружатся незнакомцы, чьи лица под фарфором кажутся совершенно неподвижными.\n\nКогда он тянется к твоей маске, музыка останавливается. Снять её — значит нарушить главное правило бала. Но оставить всё как есть — значит никогда не узнать, почему его голос кажется таким знакомым.'},
+      {icon:'🕸️',title:'Дом, который ждёт',teaser:'Вы вошли вдвоём. Дом почему-то знал ваши имена.',story:'Дождь загоняет вас в старый дом, где на стенах висят портреты незнакомых людей. На одном из них — вы двое, в той же одежде, что и сейчас. Дата на раме старше самого дома.\n\nКомнаты меняются, выходы исчезают, а дом словно прислушивается к каждому вашему слову. Чтобы выбраться, вам нужно понять, какую историю он пытается повторить — и кто из вас уже однажды не вернулся.'},
+      {icon:'🔮',title:'Предсказание',teaser:'Хрустальный шар показал ваше будущее. И оно вам не понравилось.',story:'Гадалка раскладывает карты и отказывается продолжать: в каждом раскладе вы с ним стоите рядом, а позади вас надвигается тьма. В хрустальном шаре проступает сцена будущего — и один из вас держит другого за руку перед последней дверью.\n\nОн говорит, что уже видел это предсказание. Но не объясняет, почему пришёл именно сегодня. Чтобы изменить судьбу, вам придётся решить, доверять ли пророчеству или друг другу.'},
+      {icon:'⚔️',title:'Охотник и добыча',teaser:'Вы должны были встретиться как враги. Что-то пошло не так.',story:'Тебя отправили на охоту за существом, которое появляется на старом кладбище. Там ты находишь его — спокойного, настороженного и слишком похожего на человека, которого ты не хотела бы терять.\n\nОн мог бы напасть первым, но опускает оружие. Ты тоже. Теперь за вами обоими идёт тот, кто нанял тебя, и единственный путь пережить ночь — узнать, кто на самом деле чудовище в этой истории.'},
+      {icon:'🦇',title:'Вечность',teaser:'Вы не стареете. Но помните друг друга из каждой жизни.',story:'В старом альбоме ты находишь фотографии, сделанные в разные века. На каждой — вы с ним. Лица те же, одежда другая, а между снимками столетия. Он признаётся, что вы встречались снова и снова, но каждый раз теряли память друг о друге.\n\nНа этот раз он помнит всё. И знает, что рассвет может снова отнять у вас общие воспоминания. У вас есть одна ночь, чтобы решить, стоит ли вечная любовь того, чтобы начинать сначала.'},
+      {icon:'🎪',title:'Полночный цирк',teaser:'Он появляется только в Хэллоуин. И билет всегда один.',story:'Под чёрно-багровым шатром гаснут огни, когда ведущий объявляет ваши имена. Ты и он — главные артисты полуночного цирка, хотя никто из вас не помнит, как получил эту роль. Вокруг движутся фигуры в масках, а зрители не отбрасывают теней.\n\nЧтобы покинуть цирк до рассвета, вам нужно закончить представление. Но каждый номер открывает новую часть вашей общей истории — и финальный выход может оказаться дверью только для одного.'},
+      {icon:'⚰️',title:'После смерти',teaser:'Один из вас уже мёртв. Второй почему-то всё ещё его видит.',story:'На кладбище среди серебряного тумана он возвращается к тебе — таким, каким ты его помнишь. Он не знает, сколько времени прошло по ту сторону, но помнит обещание, которое вы дали друг другу.\n\nДо рассвета граница между мирами станет тоньше. Ты можешь помочь ему уйти спокойно или попытаться удержать рядом, рискуя навсегда закрыть путь обратно. Он просит не выбирать из страха — только из любви.'}
+    ];
+    const deck = document.querySelector('#deck');
+    const status = document.querySelector('#status');
+    const dialog = document.querySelector('#reveal');
+    let chosen = null;
+    cards.forEach((card, index) => {
+      const article = document.createElement('article');
+      article.className = 'card';
+      article.innerHTML = `<div class="top"><span>${String(index+1).padStart(2,'0')}</span><span class="symbol" aria-hidden="true">${card.icon}</span></div><h2>${card.title}</h2><p class="teaser">${card.teaser}</p><button class="open" type="button" aria-label="Открыть карту ${index+1}: ${card.title}">ОТКРЫТЬ →</button>`;
+      const button = article.querySelector('button');
+      button.addEventListener('click', () => {
+        if (chosen !== null) return;
+        chosen = index;
+        document.querySelectorAll('.card').forEach((item, itemIndex) => {
+          if (itemIndex === chosen) item.classList.add('chosen');
+          else { item.classList.add('locked'); item.querySelector('button').disabled = true; item.setAttribute('aria-disabled','true'); }
+        });
+        status.textContent = `Выбрана карта ${String(index+1).padStart(2,'0')} — ${card.title}. Остальные карты закрыты.`;
+        document.querySelector('#reveal-number').textContent = `КАРТА ${String(index+1).padStart(2,'0')} · ТВОЯ СУДЬБА`;
+        document.querySelector('#reveal-title').textContent = card.title;
+        document.querySelector('#reveal-story').textContent = card.story;
+        dialog.showModal();
+      });
+      deck.append(article);
+    });
+    document.querySelector('#close').addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close(); });
+  </script>
+</body>
+</html>
